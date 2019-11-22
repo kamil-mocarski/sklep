@@ -1,0 +1,28 @@
+@import "colors";
+button {
+    color: $btnTxt;
+    border: 1px solid black;
+    font-size: 15px;
+    width: 100px;
+    height: 30px;
+    border-radius: 15px;
+    background-color: $btn;
+    box-shadow: 4px 2px 5px dimgray; 
+    &:hover{
+        background-color: $btnA;
+
+    }
+    &:active{
+        border: none;
+        background-color: $btnH;
+        color: $btnTxtH;
+    &:focus{
+        border: none;
+        background-color: $btnX;
+
+    }
+    &:disabled {
+        background-color: $btnD;
+    }
+}
+}
