@@ -1,0 +1,31 @@
+body {
+    .container {
+    
+        .menu {
+            background-color: gray;
+            height: 40px;
+            
+            ul {
+                list-style: none;
+                display: flex;
+                justify-content: space-around;
+                li { 
+                    vertical-align: bottom;
+                    padding: 20px;
+                        a {
+                            color: white;
+                            text-decoration: none;
+                            font-size: 20px;
+                        }
+                }
+            }
+        }
+    }
+
+    background-color: aquamarine;
+    h1 {
+        background-color: chartreuse;
+    text-align: center;
+    }
+    
+}

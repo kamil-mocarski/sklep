@@ -8,14 +8,7 @@ Api.prototype.getAll = function() {
     .then(this.handleResponse)
     .catch(this.error);
     
-}; 
-Api.prototype.getAllShow = function() {
-    const url = this.url;
-    return fetch(url)
-    .then(this.handleResponse)
-    .catch(this.error)
-    .then(resp =>show.adTable(resp))
-}
+};
 Api.prototype.getAllShowOffer = function() {
     const url = this.url;
     return fetch(url)
@@ -29,39 +22,6 @@ Api.prototype.getOne = function(id) {
     .then(this.handleResponse)
     .catch (this.error);
     
-}
-
-Api.prototype.post = function (id, data) {
-    const url = this.url + '/' + id;
-    return fetch(url, {
-        method: 'POST',
-        body: JSON.stringify(data),
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-        }
-    }).then(this.handleResponse)
-    .catch(this.error);
-}
-
-Api.prototype.delete = function(id) {
-    const url = this.url + "/" + id;
-    return fetch(url, {
-        method: 'DELETE'
-    }).then(this.handleResponse)
-    .catch(this.error)
-}
-Api.prototype.changeData = function(id, data){
-    const url = this.url + "/" + id;
-    return fetch(url, {
-        method: "PUT",
-        body: JSON.stringify(data),
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-        }
-    }).then(this.handleResponse)
-    .catch(this.error)
 }
 
 Api.prototype.buy = function(id, data){
@@ -123,45 +83,13 @@ Api.prototype.getProductCount = function(id) {
 
 const api = new Api("http://localhost:3000/db/sklep");
 
-//Panel administratora:
 
-const buttonAdd = document.querySelector("#add");
-buttonAdd.addEventListener('click', buttonData);
-function buttonData () {
-    const idAdd = document.querySelector('input[name="idAdd"]').value;
-    const nameAdd = document.querySelector('input[name="nameAdd"]').value;
-    const countAdd = document.querySelector('input[name="countAdd"]').value;
-    const priceAdd = document.querySelector('input[name="priceAdd"]').value;
-    const dataAdd = {"name": nameAdd, "price": parseInt(priceAdd), "count": parseInt(countAdd)}; 
-    api.post(idAdd, dataAdd);
-    
-}
-const buttonChange = document.querySelector("#change");
-buttonChange.addEventListener('click', buttonDataChange);
-function buttonDataChange () {
-    const idChange = document.querySelector('input[name="idChange"]').value;
-    const nameChange = document.querySelector('input[name="nameChange"]').value;
-    const countChange = document.querySelector('input[name="countChange"]').value;
-    const priceChange = document.querySelector('input[name="priceChange"]').value;
-    const dataChange = {"name": nameChange, "price": parseInt(priceChange), "count": parseInt(countChange)}; 
-    
-    api.changeData(idChange, dataChange);
-    
-}
-const buttonDeleteProduct = document.querySelector("#delete");
-buttonDeleteProduct.addEventListener('click', buttonDelete);
-function buttonDelete() {
-    const idDelete = document.querySelector('input[name="idDelete"]').value; 
-    console.log(idDelete);
-    api.delete(idDelete);
-    
-}
+
 
 //SKLEP TABELA 
 const Show = function() {};
 Show.prototype.adTableOffer = function(data) {
-    const divShowDataOffer = document.querySelector("#shop");
-    console.log(divShowDataOffer);
+    const divShowDataOffer = document.querySelector("#show");
     const table = this.table(data);
     divShowDataOffer.appendChild(table);
 };
@@ -202,7 +130,7 @@ Show.prototype.tHead = function () {
 Show.prototype.tHeadRow = function () {
 
     const headRow = document.createElement("tr");
-    const nameHead = ['id', 'name', 'price', 'count'];
+    const nameHead = ['id', 'nazwa towaru', 'cena', 'dostępna ilość'];
     nameHead.forEach (nameH => {
         const cell = this.cell();
         cell.innerText = nameH;
@@ -214,7 +142,13 @@ Show.prototype.tHeadRow = function () {
 
 Show.prototype.row = function (dataInd) {
     const row = document.createElement ("tr");
-    const arr = ['id', 'name', 'price', 'count'];
+    const countBuy = document.createElement("input");
+    countBuy.setAttribute ("type", "text");
+    countBuy.setAttribute ("placeholder", "wpisz ilość");
+    const buttonBuy = document.createElement("button");
+    buttonBuy.className = "buyButton";
+    buttonBuy.innerText = "kup";
+    const arr = ['id', 'name', 'price', 'count', "buy"];
     arr.forEach (name => {
     
         const cell = this.cell();
@@ -227,6 +161,11 @@ Show.prototype.row = function (dataInd) {
             cell.innerText = dataInd.data.price;
         } else if (name === "count") {
             cell.innerText = dataInd.data.count;
+        }
+        else if (name === "buy") {
+            cell.appendChild(countBuy)
+            cell.appendChild(buttonBuy)
+
         }
         //console.log(id);
         //cell.innerText = shop.fillData(id, dataInd);
@@ -241,12 +180,22 @@ Show.prototype.cell = function() {
     
 
 }
-const aaa = document.querySelector("#shopen");
-console.log(aaa)
 const show = new Show ();
-api.getAllShow()
-//api.getAllShowOffer()
+//api.getAllShow()
+api.getAllShowOffer()
 
+
+// const buyButton = document.querySelector(".buyButtton");
+// buyButton.addEventListener('click', buttonDataChange);
+// function buttonDataChange (e) {
+//     const idChange = document.querySelector('.id').value;
+//     const nameChange = document.querySelector('input[name="nameChange"]').value;
+//     const countChange = document.querySelector('input[name="countChange"]').value;
+//     const priceChange = document.querySelector('input[name="priceChange"]').value;
+//     const dataChange = {"name": nameChange, "price": parseInt(priceChange), "count": parseInt(countChange)}; 
+    
+//     api.changeData(idChange, dataChange);
+    
 
 // function count (start, end) {
 //     console.log(start);
