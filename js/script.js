@@ -13,12 +13,7 @@ Api.prototype.getAll = function() {
     .catch(this.error);
 }
 
-Api.prototype.getAllShow = function() {
-    const url = this.url;
-    return fetch(url)
-    .then(this.handleResponse)
-    .catch(this.error)
-}
+
 
 Api.prototype.getOne = function(id) {
     const url = this.url + "/" + id;
@@ -235,7 +230,7 @@ Admin.prototype.tBodyCell = function() {
 }
 
 Admin.prototype.allShow = function() {
-    api.getAllShow()
+    api.getAll()
     .then(resp => this.adTable(resp))   
 }
 
