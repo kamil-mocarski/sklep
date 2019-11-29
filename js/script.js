@@ -1,34 +1,30 @@
 const Api = function (url) {
     this.url = url;
+    this.headers = {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+    };
+}
 
-};
 Api.prototype.getAll = function() {
     const url = this.url;
     return fetch(url)
     .then(this.handleResponse)
     .catch(this.error);
-    
-}; 
+}
+
 Api.prototype.getAllShow = function() {
     const url = this.url;
     return fetch(url)
     .then(this.handleResponse)
     .catch(this.error)
-    .then(resp =>show.adTable(resp))
 }
-Api.prototype.getAllShowOffer = function() {
-    const url = this.url;
-    return fetch(url)
-    .then(this.handleResponse)
-    .catch(this.error)
-    .then(resp =>show.adTableOffer(resp))
-}
+
 Api.prototype.getOne = function(id) {
     const url = this.url + "/" + id;
     return fetch(url)
     .then(this.handleResponse)
     .catch (this.error);
-    
 }
 
 Api.prototype.post = function (id, data) {
@@ -36,10 +32,7 @@ Api.prototype.post = function (id, data) {
     return fetch(url, {
         method: 'POST',
         body: JSON.stringify(data),
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-        }
+        headers: this.headers
     }).then(this.handleResponse)
     .catch(this.error);
 }
@@ -51,15 +44,13 @@ Api.prototype.delete = function(id) {
     }).then(this.handleResponse)
     .catch(this.error)
 }
+
 Api.prototype.changeData = function(id, data){
     const url = this.url + "/" + id;
     return fetch(url, {
         method: "PUT",
         body: JSON.stringify(data),
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-        }
+        headers: this.headers
     }).then(this.handleResponse)
     .catch(this.error)
 }
@@ -69,17 +60,12 @@ Api.prototype.buy = function(id, data){
     return fetch(url, {
         method: 'PUT',
         body: JSON.stringify(data),
-        headers:  {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-        }
+        headers:  this.headers
     }).then(this.handleResponse)
     .catch(this.error)
+}
 
-}
-Api.prototype.showDataConsole = function(response) {
-    console.log(response);
-}
+
 //Obsługa błędów:
 
 Api.prototype.handleResponse = function(response) {
@@ -110,35 +96,34 @@ else {alert ("wystapił nieznay błąd")}
 }
 
 
-Api.prototype.getProductCount = function(id) {
-    const url = this.url + '/' + id;
-    return fetch(url).then(this.handleResponse).then(response =>console.log(response[0].data.count))
-    .catch (this.error);
-    
-}; 
-
-
-
-
-
 const api = new Api("http://localhost:3000/db/sklep");
+
+
 
 //Panel administratora:
 
-const buttonAdd = document.querySelector("#add");
-buttonAdd.addEventListener('click', buttonData);
-function buttonData () {
+const Admin = function () {
+    this.buttonAdd = document.querySelector("#add");
+    this.buttonChange = document.querySelector("#change");
+    this.buttonDeleteProduct = document.querySelector("#delete");
+
+}
+
+Admin.prototype.getAddData = function () {
     const idAdd = document.querySelector('input[name="idAdd"]').value;
     const nameAdd = document.querySelector('input[name="nameAdd"]').value;
     const countAdd = document.querySelector('input[name="countAdd"]').value;
     const priceAdd = document.querySelector('input[name="priceAdd"]').value;
     const dataAdd = {"name": nameAdd, "price": parseInt(priceAdd), "count": parseInt(countAdd)}; 
     api.post(idAdd, dataAdd);
-    
+
 }
-const buttonChange = document.querySelector("#change");
-buttonChange.addEventListener('click', buttonDataChange);
-function buttonDataChange () {
+
+Admin.prototype.addData = function () {
+    this.buttonAdd.addEventListener('click', this.getAddData);
+}
+
+Admin.prototype.getChangeData = function () {
     const idChange = document.querySelector('input[name="idChange"]').value;
     const nameChange = document.querySelector('input[name="nameChange"]').value;
     const countChange = document.querySelector('input[name="countChange"]').value;
@@ -148,76 +133,87 @@ function buttonDataChange () {
     api.changeData(idChange, dataChange);
     
 }
-const buttonDeleteProduct = document.querySelector("#delete");
-buttonDeleteProduct.addEventListener('click', buttonDelete);
-function buttonDelete() {
+
+Admin.prototype.changeData = function () {
+    this.buttonChange.addEventListener('click', this.getChangeData);
+}
+
+Admin.prototype.getDeleteId = function () {
     const idDelete = document.querySelector('input[name="idDelete"]').value; 
-    console.log(idDelete);
     api.delete(idDelete);
+}
+
+Admin.prototype.deleteData = function () {
+    this.buttonDeleteProduct.addEventListener('click', this.getDeleteId);
     
 }
 
-//SKLEP TABELA 
-const Show = function() {};
-Show.prototype.adTableOffer = function(data) {
+Admin.prototype.adTableOffer = function(data) {
     const divShowDataOffer = document.querySelector("#shop");
     console.log(divShowDataOffer);
     const table = this.table(data);
     divShowDataOffer.appendChild(table);
-};
+}
 
-Show.prototype.adTable = function(data) {
+Admin.prototype.adTable = function(data) {
     const divShowData = document.querySelector(".showData");
     const table = this.table(data);
     divShowData.appendChild(table);
-};
-Show.prototype.table = function(data){
+}
+
+Admin.prototype.table = function(data){
     const tab = document.createElement("table");
+    tab.className = 'table';
     tab.appendChild(this.tHead());
     tab.appendChild(this.tBody(data));
     return tab;
 
-};
+}
 
-Show.prototype.tBody = function(data){
-    const tBody = document.createElement("tbody");
-    const arrCount = data;
-    arrCount.forEach(a => {
-        //console.log(a._id)
-        const row = this.row(a);
-        //console.log(row);
-        row.id = a._id;
-        tBody.appendChild(row);
-
-    })
-    return tBody;
-};
-Show.prototype.tHead = function () {
+Admin.prototype.tHead = function () {
     const tHead = document.createElement("thead");
     const tHeadRow = this.tHeadRow();
     tHead.appendChild(tHeadRow)
     return tHead;
 
 }
-Show.prototype.tHeadRow = function () {
 
+Admin.prototype.tHeadRow = function () {
     const headRow = document.createElement("tr");
     const nameHead = ['id', 'name', 'price', 'count'];
     nameHead.forEach (nameH => {
-        const cell = this.cell();
+        const cell = this.tHeadCell();
         cell.innerText = nameH;
         headRow.appendChild(cell);
 
     })
     return headRow;
 }
+Admin.prototype.tHeadCell = function() {
+    const cell = document.createElement("th");
+    return cell;
+    
 
-Show.prototype.row = function (dataInd) {
+}
+
+Admin.prototype.tBody = function(data){
+    const tBody = document.createElement("tbody");
+    const arrCount = data;
+
+    arrCount.forEach(a => {
+        const row = this.tBodyRow(a);
+        row.id = a._id;
+        tBody.appendChild(row);
+    })
+    return tBody;
+}
+
+Admin.prototype.tBodyRow = function (dataInd) {
     const row = document.createElement ("tr");
     const arr = ['id', 'name', 'price', 'count'];
+
     arr.forEach (name => {
-    
-        const cell = this.cell();
+        const cell = this.tBodyCell();
         cell.className = name;
         if (name ===  "id") {
             cell.innerText = dataInd._id;
@@ -228,33 +224,33 @@ Show.prototype.row = function (dataInd) {
         } else if (name === "count") {
             cell.innerText = dataInd.data.count;
         }
-        //console.log(id);
-        //cell.innerText = shop.fillData(id, dataInd);
         row.appendChild(cell)
     })
     return row;
 }
 
-Show.prototype.cell = function() {
+Admin.prototype.tBodyCell = function() {
     const cell = document.createElement("td");
     return cell;
-    
-
 }
-const aaa = document.querySelector("#shopen");
-console.log(aaa)
-const show = new Show ();
-api.getAllShow()
-//api.getAllShowOffer()
 
+Admin.prototype.allShow = function() {
+    api.getAllShow()
+    .then(resp => this.adTable(resp))   
+}
 
-// function count (start, end) {
-//     console.log(start);
-//     start++;
-//     if (start > end)
-//     return;
-//     setTimeout(function(){
-//         count (start, end)
-//     }, 2000)
-// }
-// count(1, 10);
+Admin.prototype.buttonRefresh = function() {
+    const refresh = document.querySelector("#refresh");
+    refresh.addEventListener('click', this.refresh)
+}
+
+Admin.prototype.refresh = function() {
+    setTimeout(function(){ location.reload(); }, 50);
+}
+
+const admin = new Admin ();
+admin.addData();
+admin.changeData();
+admin.deleteData();
+admin.allShow();
+admin.buttonRefresh();
