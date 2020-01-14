@@ -1,12 +1,14 @@
-const Api = function (url) {
-    this.url = url;
-    this.headers = {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
+class Api {
+    constructor(url) {
+        this.url = url;
+        this.headers = {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
     };
 }
 
-Api.prototype.getAll = function() {
+//POBRANIE WSZYSTKICH PRODUKTÓW
+getAll() {
     const url = this.url;
     return fetch(url)
     .then(this.handleResponse)
@@ -14,15 +16,16 @@ Api.prototype.getAll = function() {
 }
 
 
-
-Api.prototype.getOne = function(id) {
+//POBRANIE JEDNEGO PRODUKTU
+getOne() {
     const url = this.url + "/" + id;
     return fetch(url)
     .then(this.handleResponse)
     .catch (this.error);
 }
 
-Api.prototype.post = function (id, data) {
+// TWORZENIE NOWEGO PRODUKTU
+post(id, data) {
     const url = this.url + '/' + id;
     return fetch(url, {
         method: 'POST',
@@ -31,16 +34,16 @@ Api.prototype.post = function (id, data) {
     }).then(this.handleResponse)
     .catch(this.error);
 }
-
-Api.prototype.delete = function(id) {
+//USUWANIE PRODUKTU
+delete(id) {
     const url = this.url + "/" + id;
     return fetch(url, {
         method: 'DELETE'
     }).then(this.handleResponse)
     .catch(this.error)
 }
-
-Api.prototype.changeData = function(id, data){
+//ZMIANA WŁASCIWOSCI PRODUKTU
+changeData (id, data) {
     const url = this.url + "/" + id;
     return fetch(url, {
         method: "PUT",
@@ -49,8 +52,8 @@ Api.prototype.changeData = function(id, data){
     }).then(this.handleResponse)
     .catch(this.error)
 }
-
-Api.prototype.buy = function(id, data){
+//KUPNO PRODUKTU
+buy (id, data) {
     const url = this.url + '/' + id + "/buy";
     return fetch(url, {
         method: 'PUT',
@@ -63,7 +66,7 @@ Api.prototype.buy = function(id, data){
 
 //Obsługa błędów:
 
-Api.prototype.handleResponse = function(response) {
+handleResponse(response) {
     if (response.ok) {
         return response.json();
     } else {
@@ -71,7 +74,7 @@ Api.prototype.handleResponse = function(response) {
     }
 }
 
-Api.prototype.error = function (error) {
+error(error) {
     if (error.status == 404) {
     alert("zasób nie został znalziony")
 } else if (error.status == 408) {
@@ -89,74 +92,95 @@ Api.prototype.error = function (error) {
 } 
 else {alert ("wystapił nieznay błąd")}
 }
+}
 
 
 const api = new Api("http://localhost:3000/db/sklep");
 
 
-
-//Panel administratora:
-
-const Admin = function () {
+class Admin {
+    constructor() {
     this.buttonAdd = document.querySelector("#add");
     this.buttonChange = document.querySelector("#change");
     this.buttonDeleteProduct = document.querySelector("#delete");
+    };
 
-}
-
-Admin.prototype.getAddData = function () {
+//DODAWANIE PRODUKTU
+getAddData() {
     const idAdd = document.querySelector('input[name="idAdd"]').value;
     const nameAdd = document.querySelector('input[name="nameAdd"]').value;
     const countAdd = document.querySelector('input[name="countAdd"]').value;
     const priceAdd = document.querySelector('input[name="priceAdd"]').value;
-    const dataAdd = {"name": nameAdd, "price": parseInt(priceAdd), "count": parseInt(countAdd)}; 
-    api.post(idAdd, dataAdd);
-
+    const productData = {"name": nameAdd, "price": parseInt(priceAdd), "count": parseInt(countAdd)};
+    
+    if ((idAdd.length > 0 && !(isNaN(Number(idAdd)))) && nameAdd.length>0 && (countAdd.length > 0 && !(isNaN(Number(countAdd)))) && (priceAdd.length > 0 && !(isNaN(Number(priceAdd))))) {
+    api.post(idAdd, productData);
+    alert("produkt został poprawnie dodany")
+    setTimeout(function(){ location.reload(); }, 300);
+    } else (alert("Nie wszystkie pola zostały poprawnie wypełnione, popraw lub uzupełnij dane"))
+     
 }
-
-Admin.prototype.addData = function () {
+    
+addData() {
     this.buttonAdd.addEventListener('click', this.getAddData);
 }
 
-Admin.prototype.getChangeData = function () {
+//ZMIANA DANYCH PRODUKTU:
+getChangeData() {
     const idChange = document.querySelector('input[name="idChange"]').value;
     const nameChange = document.querySelector('input[name="nameChange"]').value;
     const countChange = document.querySelector('input[name="countChange"]').value;
     const priceChange = document.querySelector('input[name="priceChange"]').value;
     const dataChange = {"name": nameChange, "price": parseInt(priceChange), "count": parseInt(countChange)}; 
+    if ((idChange.length > 0 && !(isNaN(Number(idChange)))) && nameChange.length>0 && (countChange.length > 0 && !(isNaN(Number(countChange)))) && (priceChange.length > 0 && !(isNaN(Number(priceChange))))) {
+        api.changeData(idChange, dataChange);
+        alert("produkt został poprawnie zmieniony")
+        setTimeout(function(){ location.reload(); }, 300);
+        } else (alert("Nie wszystkie pola zostały poprawnie wypełnione, popraw lub uzupełnij dane"))
     
-    api.changeData(idChange, dataChange);
     
 }
 
-Admin.prototype.changeData = function () {
+changeData() {
     this.buttonChange.addEventListener('click', this.getChangeData);
 }
 
-Admin.prototype.getDeleteId = function () {
-    const idDelete = document.querySelector('input[name="idDelete"]').value; 
-    api.delete(idDelete);
-}
 
-Admin.prototype.deleteData = function () {
+//USUWANIE PRODUKTU:
+getDeleteId() {
+    const alertDelete = document.querySelector("#allertDelete");
+    const confirmButton = document.querySelector("#confirm");
+    const cancelButton = document.querySelector("#cancel");
+    const idDelete = document.querySelector('input[name="idDelete"]').value; 
+    if ((idDelete.length > 0 && !(isNaN(Number(idDelete))))) {
+        
+       api.delete(idDelete);
+        setTimeout(function(){location.reload();
+            alert("produkt został usunięty");
+          }, 300);
+        
+    } else {alert("wprowadź poprawne id")}
+}
+deleteData() {
     this.buttonDeleteProduct.addEventListener('click', this.getDeleteId);
     
 }
 
-Admin.prototype.adTableOffer = function(data) {
+//TABELA POMOCNICZA ISTNIEJĄCYCH PRODUKTÓW:
+adTableOffer(data) {
     const divShowDataOffer = document.querySelector("#shop");
     console.log(divShowDataOffer);
     const table = this.table(data);
     divShowDataOffer.appendChild(table);
 }
 
-Admin.prototype.adTable = function(data) {
+adTable(data) {
     const divShowData = document.querySelector(".showData");
     const table = this.table(data);
     divShowData.appendChild(table);
 }
 
-Admin.prototype.table = function(data){
+table(data){
     const tab = document.createElement("table");
     tab.className = 'table';
     tab.appendChild(this.tHead());
@@ -165,7 +189,7 @@ Admin.prototype.table = function(data){
 
 }
 
-Admin.prototype.tHead = function () {
+tHead() {
     const tHead = document.createElement("thead");
     const tHeadRow = this.tHeadRow();
     tHead.appendChild(tHeadRow)
@@ -173,7 +197,7 @@ Admin.prototype.tHead = function () {
 
 }
 
-Admin.prototype.tHeadRow = function () {
+tHeadRow() {
     const headRow = document.createElement("tr");
     const nameHead = ['id', 'name', 'price', 'count'];
     nameHead.forEach (nameH => {
@@ -184,14 +208,14 @@ Admin.prototype.tHeadRow = function () {
     })
     return headRow;
 }
-Admin.prototype.tHeadCell = function() {
+tHeadCell() {
     const cell = document.createElement("th");
     return cell;
     
 
 }
 
-Admin.prototype.tBody = function(data){
+tBody(data){
     const tBody = document.createElement("tbody");
     const arrCount = data;
 
@@ -203,7 +227,7 @@ Admin.prototype.tBody = function(data){
     return tBody;
 }
 
-Admin.prototype.tBodyRow = function (dataInd) {
+tBodyRow(dataInd) {
     const row = document.createElement ("tr");
     const arr = ['id', 'name', 'price', 'count'];
 
@@ -224,28 +248,33 @@ Admin.prototype.tBodyRow = function (dataInd) {
     return row;
 }
 
-Admin.prototype.tBodyCell = function() {
+tBodyCell() {
     const cell = document.createElement("td");
     return cell;
 }
 
-Admin.prototype.allShow = function() {
+allShow() {
     api.getAll()
     .then(resp => this.adTable(resp))   
 }
+// ODŚWIEŻANIE TABELI PO WPROWADZENIU DANYCH:
+// buttonRefresh() {
+//     const refresh = document.querySelector("#refresh");
+//     refresh.addEventListener('click', this.refresh)
+// }
 
-Admin.prototype.buttonRefresh = function() {
-    const refresh = document.querySelector("#refresh");
-    refresh.addEventListener('click', this.refresh)
+// refresh() {
+//     setTimeout(function(){ location.reload(); }, 50);
+// }
 }
-
-Admin.prototype.refresh = function() {
-    setTimeout(function(){ location.reload(); }, 50);
-}
-
 const admin = new Admin ();
 admin.addData();
 admin.changeData();
 admin.deleteData();
 admin.allShow();
-admin.buttonRefresh();
+// admin.buttonRefresh();
+// const a = '';
+// console.log(!(isNaN(Number(a))))
+// console.log(a.length)
+
+// if (a.length > 0 && !(isNaN(Number(a))) ) {console.log("dupa")} else {console.log("jajca")}
