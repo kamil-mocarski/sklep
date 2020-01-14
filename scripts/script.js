@@ -136,8 +136,8 @@ class Admin {
             api.changeData(idChange, dataChange);
             alert("produkt został poprawnie zmieniony")
             setTimeout(function(){ location.reload(); }, 300);
-        } else (alert("Nie wszystkie pola zostały poprawnie wypełnione, popraw lub uzupełnij dane"))
-        }
+        } else {alert("Nie wszystkie pola zostały poprawnie wypełnione, popraw lub uzupełnij dane")}
+    }
 
     changeData() {
         this.buttonChange.addEventListener('click', this.getChangeData);
