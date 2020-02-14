@@ -192,6 +192,7 @@ class Show {
             productElement.count = count;
                 if (this.buyArray.length == 0) {
                     this.buyArray.push(productElement);
+                    alert(`Dodałeś produkt ${productElement.name} do koszyka`)
                 
                     } else {
                         if (this.buyArray.some((el) => {
@@ -200,6 +201,8 @@ class Show {
                                         alert(`Dodałeś już produkt ${productElement.name}, zmien tylko ilość w koszyku`)
                         } else {
                                 this.buyArray.push(productElement);
+                                alert(`Dodałeś produkt ${productElement.name} do koszyka`)
+                                
                         }
                     }
                 this.cartCount.innerText = this.buyArray.length;
@@ -347,10 +350,12 @@ class Cart {
                 deleteButton.addEventListener("click", () => {
                     const trId = document.querySelector(`#row${data.id}`);
                     const table = document.querySelector("#tableCart");
+                    const cartCountProd = document.querySelector('#cartCountProduct');
                     table.removeChild(trId);
                     for (let i = 0; i < this.cartArray.length; i++) {
                             if (this.cartArray[i].id == data.id) {
-                                this.cartArray.splice(i,1)
+                                this.cartArray.splice(i,1);
+                                cartCountProd.innerText = this.cartArray.length;
                             }
                         }
         
