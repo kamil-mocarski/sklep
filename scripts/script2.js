@@ -175,7 +175,7 @@ class Show {
                 cell.appendChild(countProduct)
                 cell.appendChild(addToCartButton)
                 countProduct.addEventListener('change', ()=> {
-                    if(dataObj.doc.count < countProduct.value) {
+                    if(parseInt(dataObj.doc.count) < parseInt(countProduct.value)) {
                         addToCartButton.disabled = true;
                         alert(`Nie mamy tyle produktu ${dataObj.doc.name} na stanie, zmniejsz ilość do ${dataObj.doc.count} `)
                     } else {
@@ -326,7 +326,6 @@ class Cart {
     
     cartRow(data) {
         const buyButtonDiv = document.querySelector('#buyButton');
-        console.log(buyButtonDiv)
         const row = document.createElement('tr');
         const count = document.createElement('input');
         const deleteButton = document.createElement('button');

@@ -84,6 +84,7 @@ class Api {
             return Promise.reject(response);
         }
     }
+    
 //Obsługa błędów:
     error(error) {
         if (error.status == 404) {
@@ -125,15 +126,16 @@ class Admin {
         const countAdd = document.querySelector('input[name="countAdd"]').value;
         const priceAdd = document.querySelector('input[name="priceAdd"]').value;
         const imageAdd = document.querySelector('input[name="imageAdd"]').files[0]
-
+        
         if ((idAdd.length > 0 && !(isNaN(Number(idAdd)))) && nameAdd.length > 0 && descriptionAdd.length > 0 && (countAdd.length > 0 && !(isNaN(Number(countAdd)))) && (priceAdd.length > 0 && !(isNaN(Number(priceAdd)))) && imageAdd) {
             const formData = new FormData();
-            formData.append('id', idAdd);
+            formData.append('id', idAdd.trim());
             formData.append('name', nameAdd);
             formData.append('description', descriptionAdd);
             formData.append('price', priceAdd);
             formData.append('count', countAdd);
             formData.append('file', imageAdd);
+        
             api.postImg(idAdd, formData);
             setTimeout(function(){ location.reload() }, 300);
         } else {alert('Nie wszystkie pola zostały poprawnie wypełnione, popraw lub uzupełnij dane')}
@@ -154,7 +156,7 @@ class Admin {
 
         if ((idChange.length > 0 && !(isNaN(Number(idChange)))) && nameChange.length > 0 && descriptionChange.length > 0 && (countChange.length > 0 && !(isNaN(Number(countChange)))) && (priceChange.length > 0 && !(isNaN(Number(priceChange)))) && imageChange) {
             const formData = new FormData();
-            formData.append('id', idChange);
+            formData.append('id', idChange.trim());
             formData.append('name', nameChange);
             formData.append('description', descriptionChange);
             formData.append('price', priceChange);
